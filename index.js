@@ -543,13 +543,13 @@ function touchDown(evt){
     var x = touch.clientX - touch.target.offsetLeft;
     var y = touch.clientY - touch.target.offsetTop;
     if(state.gameOver){
-        if(y > 156 && y < 196){
+        if(y > (-230) && y < (-170)){
             state.reset(velocityStart);
         }
         return;
     }
 
-    if(x < 256){
+    if(x < 0){
         state.player.move(-1);
     }
     else{
