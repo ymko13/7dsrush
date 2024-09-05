@@ -59,7 +59,7 @@ class Player {
             this.currentLane = Math.min(Math.max(this.currentLane + this.intendedLaneChange, 0), lanes.length - 1);
             this.intendedLaneChange = 0;
         }
-        
+
         var currentLane = lanes[this.currentLane];
         if(Math.abs(this.x - currentLane.carX) > carLerpAmnFinish){
             this.x = lerp(this.x, currentLane.carX, carLerpAmn);
@@ -244,9 +244,9 @@ class Color {
 
 class Background {
     constructor(){
-        this.backgroundScoreBreaks = [75, 175, 325, 550, 775];
+        this.backgroundScoreBreaks = [144, 361, 625, 1024, 1600];
         this.blurColors = [new Color(125,253,254),new Color(255,20,147),new Color(127,255,0),new Color(138,43,226)]
-        this.backgroundScoreAlphaSwitchFrames = 120.0;
+        this.backgroundScoreAlphaSwitchFrames = 180.0;
         this.reset();
     }
 
@@ -424,11 +424,11 @@ class GameState{
 
     drawHighscores(){
         drawCanvas.globalAlpha = 0.9;
-        drawCanvas.fillStyle = 'white'
+        drawCanvas.fillStyle = 'black'
         drawCanvas.fillRect(0,0, 512, 512);
         drawCanvas.globalAlpha = 1;
         drawCanvas.textAlign = "center";
-        drawCanvas.fillStyle = 'black'
+        drawCanvas.fillStyle = 'white'
         drawCanvas.font = "18px PressStart";
         var s = "start";
         if(this._cheatDetected){
@@ -439,11 +439,11 @@ class GameState{
         } 
         if(this.score > 0){
             drawCanvas.textAlign = "center";
-            drawCanvas.fillStyle = 'black'
+            drawCanvas.fillStyle = 'white'
             drawCanvas.font = "20px PressStart";
             drawCanvas.fillText("Score:" + this.score.toFixed(0), 256, 110);
             drawCanvas.textAlign = "center";
-            drawCanvas.fillStyle = 'black'
+            drawCanvas.fillStyle = 'white'
             drawCanvas.font = "32px PressStart";
             drawCanvas.fillText("Game Over!", 256, 266);
             if(this.player.botEnabled){
@@ -452,7 +452,7 @@ class GameState{
             s = "restart"
         }
         drawCanvas.textAlign = "center";
-        drawCanvas.fillStyle = 'black'
+        drawCanvas.fillStyle = 'white'
         drawCanvas.globalAlpha = 1;
         drawCanvas.font = "12px PressStart";
         drawCanvas.fillText("For Mobile press here to " + s, 256, 176);
@@ -462,11 +462,11 @@ class GameState{
     }
 
     drawBoard(){
-        drawCanvas.globalAlpha = 0.7;
-        drawCanvas.fillStyle = 'white'
+        drawCanvas.globalAlpha = 0.6;
+        drawCanvas.fillStyle = 'black'
         drawCanvas.fillRect(0,0, sides + 15, 65); //19
         drawCanvas.globalAlpha = 1;
-        drawCanvas.fillStyle = 'black'
+        drawCanvas.fillStyle = 'white'
         drawCanvas.textAlign = "start";
         drawCanvas.font = "11px PressStart";
         drawCanvas.fillText("Score:" + this.score.toFixed(0), 8, 26);
@@ -478,16 +478,16 @@ let fps = 60;
 
 canvas.width = 512;
 canvas.height = 512;
-const carLerpAmn = 0.225;
+const carLerpAmn = 0.20;
 const carLerpAmnFinish = 3;
 const sides = 116;
-const carLength = 80;
+const carLength = 78;
 const laneWidth = 70;
 const laneMargin = 13;
 const carWidth = laneWidth - laneMargin * 2;
 let interval = 1000 / fps;
-const velocityStart = 3.5;
-const velocityIncrease = 0.275;
+const velocityStart = 3;
+const velocityIncrease = 0.2;
 
 const carImg = new Image();
 carImg.src = "./assets/car.png";
@@ -533,14 +533,11 @@ function keyDown(evt){
         case 39:
             state.player.move(1);
             break;
-       case 70:
+        case 70:
             fps = 200;
             interval = 1000 / fps;
             clearInterval(_i);
             _i = setInterval(game, interval);
-            break;
-        case 80:
-            state.player.botEnabled = true;
             break;
         case 32:
             if(state.gameOver){
