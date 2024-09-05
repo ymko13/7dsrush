@@ -540,16 +540,18 @@ function keyDown(evt){
 
 function touchDown(evt){
     var touch = evt.targetTouches[0];
+    console.log(touch)
     var x = touch.clientX - touch.target.offsetLeft;
     var y = touch.clientY - touch.target.offsetTop;
+    console.log("X: " + x + " Y:" + y)
     if(state.gameOver){
-        if(y > 156 && y < 196){
+        if(y > (-230) && y < (-170)){
             state.reset(velocityStart);
         }
         return;
     }
 
-    if(x < 256){
+    if(x < 0){
         state.player.move(-1);
     }
     else{
