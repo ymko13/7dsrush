@@ -244,9 +244,9 @@ class Color {
 
 class Background {
     constructor(){
-        this.backgroundScoreBreaks = [144, 361, 625, 1024, 1600];
+        this.backgroundScoreBreaks = [120, 360, 620, 1100, 2000];
         this.blurColors = [new Color(125,253,254),new Color(255,20,147),new Color(127,255,0),new Color(138,43,226)]
-        this.backgroundScoreAlphaSwitchFrames = 180.0;
+        this.backgroundScoreAlphaSwitchFrames = 60.0 + (this.score / 500 * 180);
         this.reset();
     }
 
@@ -262,6 +262,7 @@ class Background {
         this.lastBlurScore = 0;
         this.currentBlurColor = new Color(0,0,0);
         this.currentTargetColor = this.blurColors[0];
+        this.lineMix = 0
     }
 
     update(score){       
@@ -314,6 +315,7 @@ class Background {
             drawCanvas.drawImage(backgrounds[this.currentBackground + 1], 0, y - 512, 512, 512)       
         }
         else {
+            drawCanvas.globalAlpha = this.lineMix = lerp(this.lineMix, 1,  0.025);
             this.drawLine(106,0,12,512);
             this.drawLine(395,0,12,512);
             this.drawLine(183,0,6,512);
@@ -423,6 +425,7 @@ class GameState{
     }
 
     drawHighscores(){
+        this.drawBoard();
         drawCanvas.globalAlpha = 0.9;
         drawCanvas.fillStyle = 'black'
         drawCanvas.fillRect(0,0, 512, 512);
@@ -439,7 +442,7 @@ class GameState{
         } 
         if(this.score > 0){
             drawCanvas.textAlign = "center";
-            drawCanvas.fillStyle = 'white'
+            drawCanvas.fillStyle = 'black'
             drawCanvas.font = "20px PressStart";
             drawCanvas.fillText("Score:" + this.score.toFixed(0), 256, 110);
             drawCanvas.textAlign = "center";
@@ -470,11 +473,11 @@ class GameState{
         drawCanvas.textAlign = "start";
         drawCanvas.font = "11px PressStart";
         drawCanvas.fillText("Score:" + this.score.toFixed(0), 8, 26);
-        drawCanvas.fillText("km/h:" + (this.velocity * 5).toFixed(0), 8, 51);
+        drawCanvas.fillText("mph:" + (this.velocity * 7).toFixed(0), 8, 51);
     }
 }
 
-let fps = 60;
+let fps = 90;
 
 canvas.width = 512;
 canvas.height = 512;
@@ -505,7 +508,7 @@ const logo = new Image();
 logo.src = "./assets/defaultLogo.png";
 
 const backgroundTrack = new Audio("./assets/music.mp3");
-backgroundTrack.volume = 0.1;
+backgroundTrack.volume = 0.2;
 
 const backgroundC = new Background();
 
@@ -551,18 +554,20 @@ function touchDown(evt){
     var touch = evt.targetTouches[0];
     var x = touch.clientX - touch.target.offsetLeft;
     var y = touch.clientY - touch.target.offsetTop;
+
+    if(x < 0){
+        state.player.move(-1);
+        return;
+    }
+    else if (x >= 0){
+        state.player.move(1);
+        return;
+    }
+    
     if(state.gameOver){
         if(y > (-230) && y < (-170)){
             state.reset(velocityStart);
         }
-        return;
-    }
-
-    if(x < 0){
-        state.player.move(-1);
-    }
-    else{
-        state.player.move(1);
     }
 }
 
