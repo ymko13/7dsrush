@@ -1,21 +1,35 @@
 <style>
-    @font-face {font-family: PressStart; src: url('PressStart2P.ttf')}
+    @font-face {font-family: PressStart; src: url('../PressStart2P.ttf')}
     body{
+        background-color: black;
         font-family: PressStart, sans-serif;
-        margin: 0px;
         padding: 0px;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         display: flex;
     }
+
     canvas{
-        box-shadow: black 20px 10px 50px;
+        width: 70%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);     
+    }
+
+    @media (max-width: 1000px) {
+        canvas {
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);   
+        }
     }
 </style>
 <body>
-    <title>7DS SvS Rush</title>
-    <h1>7DS SvS Rush</h1>
+    <title>7 Deadly Sins Rush</title>
     <canvas></canvas>
 </body>
 <script src="./index.min.js"></script>
