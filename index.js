@@ -40,6 +40,7 @@ class Collider {
 class Player {
     constructor(y, width, height, color, currentLane){
         this.currentLane = currentLane;
+        this.intendedLaneChange = 0;
         this.x = lanes[currentLane].carX;
         this.y = y;
         this.width = width;
@@ -50,10 +51,15 @@ class Player {
     }
 
     move(direction){
-        this.currentLane = Math.min(Math.max(this.currentLane + direction, 0), lanes.length - 1);
+        this.intendedLaneChange = direction;
     }
 
     update(){
+        if(this.intendedLaneChange != 0){
+            this.currentLane = Math.min(Math.max(this.currentLane + this.intendedLaneChange, 0), lanes.length - 1);
+            this.intendedLaneChange = 0;
+        }
+        
         var currentLane = lanes[this.currentLane];
         if(Math.abs(this.x - currentLane.carX) > carLerpAmnFinish){
             this.x = lerp(this.x, currentLane.carX, carLerpAmn);
