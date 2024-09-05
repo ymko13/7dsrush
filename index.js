@@ -489,8 +489,8 @@ const laneWidth = 70;
 const laneMargin = 13;
 const carWidth = laneWidth - laneMargin * 2;
 let interval = 1000 / fps;
-const velocityStart = 3;
-const velocityIncrease = 0.2;
+const velocityStart = 2.5;
+const velocityIncrease = 0.175;
 
 const carImg = new Image();
 carImg.src = "./assets/car.png";
