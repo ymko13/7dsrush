@@ -155,43 +155,35 @@ class CarObstacle {
     constructor(lane, width, height, color){
         this.currentLane = lane;
         this.x = lanes[lane].carX;
-        this.y = -200;
+        this.y = -125 - Math.random() * 200;
         this.width = width;
         this.height = height;
         this.color = color;
         this.velocity = Math.random() * (Math.random() > 0.5 ? -1 : 1);
         this.collider = new Collider(this.x, this.y, this.width, this.height);
-        this.spawnTimer = 30;
     }
 
-    reset(currentVelocity, otherObstacleLane){
-        this.spawnTimer = 20 + Math.random() * 40;
-        this.y = -100;
-        this.velocity = currentVelocity * 0.125 * (Math.random() > 0.5 ? -1 : 1) + currentVelocity * 0.25 + (Math.random() > 0.5 ? -3 : 3);
+    reset(currentVelocity, otherObstacle){
+        this.y = -200 + (Math.random() * 75 * (Math.random() > 0.5 ? -1 : 1));
+        this.velocity = currentVelocity * 0.125 * (Math.random() > 0.5 ? -1 : 1) + (Math.random() * currentVelocity * 0.3);
 
-        this.currentLane = (this.currentLane + Math.floor(Math.random() * 400)) % 4;
-        if(this.currentLane == otherObstacleLane){
-            this.switchLane();
-        }
-    }
+        this.currentLane = Math.floor(Math.random() * 400) %  4;
 
-    switchLane(){
-        if(this.currentLane == 0){
-            this.currentLane = 2;
-        }
-        else if(this.currentLane == 1){
-            this.currentLane == 2;
-        }
-        else if(this.currentLane == 2){
-            this.currentLane == 1;
-        }
-        else if(this.currentLane == lanes.length)
+        var otherObstacleXDiff = Math.abs(this.y - otherObstacle.y);
+
+        if(otherObstacleXDiff < 150)
         {
-            this.currentLane = 1;
+            while(this.currentLane == otherObstacle.currentLane){        
+                this.currentLane = Math.floor(Math.random() * 400) %  4;
+            }
         }
     }
 
-    update(velocity, otherObstacleLane){
+    update(velocity, otherObstacle){        
+        if(this.y > (canvas.height + carLength)){
+            this.reset(velocity, otherObstacle);
+        }
+        
         this.y += velocity + this.velocity * interval / 1000;
         var currentLane = lanes[this.currentLane];
         if(Math.abs(this.x - currentLane.carX) > carLerpAmnFinish){
@@ -200,16 +192,8 @@ class CarObstacle {
         else{
             this.x = currentLane.carX;
         }
+
         this.collider.update(this.x, this.y);
-        
-        if(this.y > (canvas.height + carLength)){
-            if(this.spawnTimer <= 0){
-                this.reset(velocity, otherObstacleLane);
-            }
-            else {
-                this.spawnTimer--;
-            }
-        }
     }
 
     draw(){
@@ -393,8 +377,8 @@ class GameState{
         this.y += this.velocity;
         this.y %= 513;
 
-        this.obstacles[0].update(this.velocity, this.obstacles[1].currentLane);
-        this.obstacles[1].update(this.velocity, this.obstacles[0].currentLane);
+        this.obstacles[0].update(this.velocity, this.obstacles[1]);
+        this.obstacles[1].update(this.velocity, this.obstacles[0]);
 
         this.obstacles.forEach(element => {
             if(this.player.collider.collides(element.collider)){
@@ -465,6 +449,7 @@ class GameState{
         drawCanvas.fillStyle = 'black'
         drawCanvas.globalAlpha = 1;
         drawCanvas.font = "12px PressStart";
+        drawCanvas.fillText("For Mobile press here to " + s, 256, 176);
         drawCanvas.fillText("Press SPACE to " + s, 256, 450);
         drawCanvas.fillText("Hit left arrow key to go left", 256, 470);
         drawCanvas.fillText("Hit right arrow key to go right", 256, 490);
@@ -495,8 +480,8 @@ const laneWidth = 70;
 const laneMargin = 13;
 const carWidth = laneWidth - laneMargin * 2;
 let interval = 1000 / fps;
-const velocityStart = 3;
-const velocityIncrease = 0.25;
+const velocityStart = 3.5;
+const velocityIncrease = 0.275;
 
 const carImg = new Image();
 carImg.src = "./assets/car.png";
@@ -545,12 +530,6 @@ function keyDown(evt){
         case 80:
             state.player.botEnabled = true;
             break;
-        case 70:
-            fps = 144;
-            interval = 1000 / fps;
-            clearInterval(_i);
-            _i = setInterval(game, interval);
-            break;
         case 32:
             if(state.gameOver){
                 state.reset(velocityStart);
@@ -559,4 +538,24 @@ function keyDown(evt){
     }
 }
 
+function touchDown(evt){
+    var touch = evt.targetTouches[0];
+    var x = touch.clientX - touch.target.offsetLeft;
+    var y = touch.clientY - touch.target.offsetTop;
+    if(state.gameOver){
+        if(y > 156 && y < 196){
+            state.reset(velocityStart);
+        }
+        return;
+    }
+
+    if(x < 256){
+        state.player.move(-1);
+    }
+    else{
+        state.player.move(1);
+    }
+}
+
 window.addEventListener('keydown', keyDown)
+canvas.addEventListener("touchstart", touchDown, false)
