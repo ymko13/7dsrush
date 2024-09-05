@@ -533,6 +533,12 @@ function keyDown(evt){
         case 39:
             state.player.move(1);
             break;
+       case 70:
+            fps = 200;
+            interval = 1000 / fps;
+            clearInterval(_i);
+            _i = setInterval(game, interval);
+            break;
         case 80:
             state.player.botEnabled = true;
             break;
